@@ -17,17 +17,39 @@ class ShopProvider extends Component {
     isMenuOpen: false,
   };
 
-  createCheckout = async () => {};
+  componentDidMount() {
+    if (localStorage.checkout_id) {
+      this.fetchCheckout(localStorage.checkout_id);
+    } else {
+      this.createCheckout();
+    }
+  }
 
-  fetchCheckout = async () => {};
+  createCheckout = async () => {
+    const checkout = await client.checkout.create();
+    localStorage.setItem('checkout_id', checkout.id);
+    this.setState({ checkout });
+  };
+
+  fetchCheckout = async (checkoutId) => {
+    client.checkout.fetch(checkoutId).then((checkout) => {
+      this.setState({ checkout });
+    });
+  };
 
   addItemToCheckout = async () => {};
 
   removeLineItem = async (lineItemsIdsToRemove) => {};
 
-  fetchAllProducts = async () => {};
+  fetchAllProducts = async () => {
+    const products = await client.product.fetchAll();
+    this.setState({ products });
+  };
 
-  fetchProductWithHandle = async (handle) => {};
+  fetchProductWithHandle = async (handle) => {
+    const product = await client.product.fetchByHandle(handle);
+    this.setState({ product });
+  };
 
   closeCart = () => {};
 
@@ -38,7 +60,6 @@ class ShopProvider extends Component {
   openMenu = () => {};
 
   render() {
-    console.log(client);
     return <ShopContext.Provider>{this.props.children}</ShopContext.Provider>;
   }
 }
